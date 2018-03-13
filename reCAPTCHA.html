@@ -1,0 +1,62 @@
+
+<SCRIPT LANGUAGE="SpeedScript">
+
+PROCEDURE  process-web-request:
+    Define variable reCaptchaResponse   AS CHARACTER NO-UNDO. 
+    Define variable formData            AS CHARACTER NO-UNDO. 
+    Define variable reCAPTCHAJSON       AS CHARACTER NO-UNDO.
+    
+    IF REQUEST_METHOD EQ "POST" THEN
+    DO:
+    
+        reCaptchaResponse = get-value("g-recaptcha-response").
+    
+        IF reCaptchaResponse NE '' THEN 
+        DO:
+        
+            set-user-field("response", reCaptchaResponse).
+            
+            formData = url-field-list("secret,response", INPUT "&").
+            
+            message "FormData" formData.
+          
+            RUN reCAPTCHAValidate.p(INPUT formData,
+                                    OUTPUT reCAPTCHAJSON).
+                                    
+                message "reCAPTCHAJSON" reCAPTCHAJSON.                                    
+                                    
+            set-user-field("reCAPTCHAJSON", reCAPTCHAJSON).                                    
+            
+            
+        END.
+    
+    END.
+
+END PROCEDURE.
+
+   set-user-field("secret", "xxxxxxxxxxxxxxxxxxxxxxx").
+   set-user-field("sitekey", "xxxxxxxxxxxxxxxxxxxxxx").
+   
+   RUN process-web-request.
+
+</script>
+
+
+<html>
+  <head>
+    <title>reCAPTCHA demo: Explicit render after an onload callback</title>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+
+  </head>
+  <body>
+    <form action="`SELFURL`" method="POST">
+      <div class="g-recaptcha" data-sitekey="`get-value('sitekey')`"></div>
+      <br>
+      <input type="submit" value="Submit">
+    </form>
+    
+    <pre>`get-value("reCAPTCHAJSON")`</pre>
+    
+  </body>
+</html>
+
