@@ -54,11 +54,8 @@ PROCEDURE getResponse:
     /** Strip away the HTTP headers. **/
     vcWebResp = REPLACE(vcWebResp, "~r~n", "~r").
     
-    INDEX(vcWebResp, "~r~r").
-    
     vcWebResp = SUBSTRING(vcWebResp, INDEX(vcWebResp, "~r~r") + 2).
     
-        
     opServerResponseData = vcWebResp.
     
 END.
